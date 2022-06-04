@@ -1,0 +1,35 @@
+<div class="container w-75 border border-primary  ">
+<h2 class="text-center">Post an Article</h2>
+
+<form action= "/" method="POST" class="p-3">
+
+
+ {{#if errorMessage}}
+<div class="alert alert-danger">
+{{errorMessage}}
+
+</div>
+    {{/if}}
+
+  <!-- Name input -->
+ 
+  <div class="form-outline mb-4">
+    <label class="form-label" for="form4Example1">Title</label>
+    <input type="text" id="form4Example1" name="title" class="form-control" />
+   
+  </div>
+
+
+
+  <!-- Message input -->
+  <div class="form-outline mb-4">
+    <label class="form-label" for="form4Example3">Contain</label>
+    <textarea name="contain" class="form-control" id="form4Example3" rows="4"></textarea>
+  </div>
+
+  
+
+  <!-- Submit button -->
+  <input type="submit" class="btn btn-primary btn-block mb-4" value="Save"/>
+</form>
+</div>

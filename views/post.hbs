@@ -1,0 +1,21 @@
+<div class="container w-50 ">
+    <a  class="btn btn-success" href="/">Go to Home</a>
+        <div class="d-flex p-3  text-center ustify-content-start">
+    {{#each posts}}
+   
+
+<div class="card-body">
+<h2 class="card-title p-2">
+    <a class="link-primary" href="/post/{{this.id}}">
+    
+{{this.title}}
+    </a>
+
+</h2>
+    
+
+</div>
+    {{/each}}
+        </div>
+    
+</div>

@@ -1,0 +1,25 @@
+{
+  "name": "nodejs",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "start": "node app.js"
+  },
+  "dependencies": {
+    "cookie-parser": "~1.4.4",
+    "debug": "~2.6.9",
+    "dompurify": "^2.3.8",
+    "express": "~4.16.1",
+    "hbs": "~4.0.4",
+    "http-errors": "~1.6.3",
+    "jsdom": "^19.0.0",
+    "marked": "^4.0.16",
+    "morgan": "~1.9.1",
+    "showdown": "^2.1.0"
+  },
+  "main": "app.js",
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": ""
+}
