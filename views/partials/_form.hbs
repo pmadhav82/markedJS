@@ -1,0 +1,24 @@
+
+  <!-- Name input -->
+ <a href="/newPost" class="btn btn-success"> All Articles</a>
+
+  <div class="form-outline mb-3">
+    <label class="form-label" for="form4Example1">Title</label>
+    <input type="text" required value = "{{title}}" id="form4Example1" name="title" class="form-control" />
+   
+  </div>
+
+
+
+  <!-- Message input -->
+  <div class="form-outline mb-4">
+    <label class="form-label" for="form4Example3">Contain</label>
+    <textarea  required name="contain" class="form-control" id="form4Example3" rows="4">
+      {{contain}}
+    </textarea>
+  </div>
+
+  
+
+  <!-- Submit button -->
+  <input type="submit" class="btn btn-primary btn-block mb-4" value="Save"/>

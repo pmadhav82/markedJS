@@ -1,0 +1,14 @@
+
+<form action= "/editPost/{{id}}" method="POST" class="p-3">
+
+
+ {{#if errorMessage}}
+<div class="alert alert-danger">
+{{errorMessage}}
+
+</div>
+    {{/if}}
+
+    {{> _form}}
+</form>
+</div>

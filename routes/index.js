@@ -13,9 +13,47 @@ const window = new JSDOM('').window;
 
 
 let posts = [];
+
+
+
+//POST a Blog
+router.post("/", (req,res)=>{
+  const {title, contain} = req.body;
+
+  if(title=== "" || contain ===""){
+    res.render("index",{
+      errorMessage:"All field are required to fill.",
+  
+    })
+    
+  }
+  else{
+    
+     const html      = DOMPurify.sanitize(marked.parse(contain))
+  
+
+   const newPost = {
+     title,
+     contain,
+     html,
+     id : new Date().getTime().toString()
+   }
+
+   posts.push(newPost);
+
+res.redirect("newPost")
+ }
+}
+)
+
+
+
 /* GET home page. */
 router.get('/', function(req, res, next) {
-  res.render('index');
+  res.render('index',{
+    title: req.body.title,
+    contain: req.body.contain
+  });
 });
 
 
@@ -31,35 +69,12 @@ router.get("/newPost", (req,res)=>{
   }
 })
 
-//POST a Blog
-router.post("/", (req,res)=>{
-  const {title, contain} = req.body;
-  
-  if(title=== "" || contain ===""){
-    res.render("index",{
-      errorMessage:"All field are required to fill."
-    })
-  }
-  else{
-    
-     const html      = DOMPurify.sanitize(marked.parse(contain))
-  
 
-   const newPost = {
-     title,
-     html,
-     id : new Date().getTime().toString()
-   }
-
-   posts.push(newPost);
-
-res.redirect("newPost")
- }
 
 
 
 // GET a single blog
- router.get("/post/:id", (req,res)=>{
+router.get("/post/:id",(req,res)=>{
 
   const {id}= req.params;
   const post = posts.filter(p=>{
@@ -70,17 +85,50 @@ res.redirect("newPost")
     post
   })
  })
-  
+
 // DELETE post
 router.get("/deletePost/:id",(req,res)=>{
   const {id}= req.params;
+  
   let itemTobeRemoved = posts.findIndex(post=> post.id === id);
   posts.splice(itemTobeRemoved,1);
   res.redirect("/newPost")
 })
 
+// Edit post
 
+router.get("/editPost/:id",(req,res)=>{
+  const {id}= req.params;
+  
+  let item= posts.find(post=> post.id === id);
+
+  res.render("edit",{
+    title: item.title,
+    contain: item.contain,
+    id
+  })
+})
+
+
+router.post("/editPost/:id",(req,res)=>{
+  const {id} = req.params;
+  let editItem = posts.find(p=> p.id === id);
+  
+  let {title, contain}= req.body;
+  const html      = DOMPurify.sanitize(marked.parse(contain))
+  editItem.title = title;
+  editItem.contain = contain;
+  editItem.html = html;
+  res.redirect("/newPost")
+  
 
 })
+
+
+
+
+
+
+
 
 module.exports = router;
