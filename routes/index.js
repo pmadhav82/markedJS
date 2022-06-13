@@ -29,7 +29,7 @@ router.post("/", (req,res)=>{
   }
   else{
     
-     const html      = DOMPurify.sanitize(marked.parse(contain))
+     const html      = DOMPurify.sanitize(marked.parse(contain.trim()))
   
 
    const newPost = {
@@ -104,7 +104,7 @@ router.get("/editPost/:id",(req,res)=>{
 
   res.render("edit",{
     title: item.title,
-    contain: item.contain,
+    contain: item.contain.replace(/\s+/g,' ').trim(),
     id
   })
 })
@@ -115,9 +115,9 @@ router.post("/editPost/:id",(req,res)=>{
   let editItem = posts.find(p=> p.id === id);
   
   let {title, contain}= req.body;
-  const html      = DOMPurify.sanitize(marked.parse(contain))
+  const html      = DOMPurify.sanitize(marked.parse(contain.trim()))
   editItem.title = title;
-  editItem.contain = contain;
+  editItem.contain = contain.trim();
   editItem.html = html;
   res.redirect("/newPost")
   

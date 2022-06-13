@@ -1,9 +1,40 @@
+
+
 body {
   padding: 20px;
-  font: 20px "Lucida Grande", Helvetica, Arial, sans-serif;
+  font: "Lucida Grande", Helvetica, Arial, sans-serif;
+  
 }
-
+.m{
+  position: fixed;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+display: flex;
+justify-content: center;
+align-items: center;
+background-color: rgba(0,0,0,0.5);
+visibility: hidden;
+}
+.m-c{
+background-color: #ffff;
+margin: auto;
+padding: 20px;
+border: 1px solid #888;
+width: 80%;
+}
+ .s-m{
+visibility: visible;
+}
 a {
   color: #222e33;
 }
 
+  /* pre code {
+  background-color: rgb(50, 43, 43);
+  border: 1px solid #999;
+  display: block;
+  padding: 20px;
+  color: white;
+}   */

@@ -4,8 +4,19 @@
 {{#each post}}
 <div class="card-body  border p-2 m-3">
      <a href="/editPost/{{this.id}}" class="btn btn-primary m-2">Edit</a>
+<button id="deletebtn" class="btn btn-secondary">Delete</button>
 
+
+<div class="m">
+<div class="m-c">
+    <div class="card-text m-2">
+        <h4>Do you want to delete it?</h4>
+    </div>
         <a href="/deletePost/{{this.id}}" class="btn btn-secondary m-2">Delete</a>
+        <button id="canclebtn" class="btn btn-primary">Cancle</button>
+</div>
+
+</div>
 <h2 class="card-title p-2 text-center">
     
 {{this.title}}
