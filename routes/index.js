@@ -22,14 +22,14 @@ router.post("/", (req,res)=>{
 
   if(title=== "" || contain ===""){
     res.render("index",{
-      errorMessage:"All field are required to fill.",
+      errorMessage:"All field are required to fill."
   
     })
     
   }
   else{
     
-     const html      = DOMPurify.sanitize(marked.parse(contain.trim()))
+     const html      = DOMPurify.sanitize(marked.parse(contain))
   
 
    const newPost = {
