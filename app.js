@@ -5,6 +5,8 @@ var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 const hbs = require ("hbs")
 var indexRouter = require('./routes/index');
+const mongoose = require("mongoose");
+ const mongodbURL = "mongodb://0.0.0.0/"
 
 var app = express();
 
@@ -19,6 +21,20 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 app.use('/', indexRouter);
-app.listen(3000,()=>{
+
+
+
+mongoose
+  .connect(mongodbURL)
+  .then(() => {
+    console.log("connected to the database");
+  })
+  .catch((er) => {
+    console.log(er.message);
+  });
+
+
+
+app.listen(3000,  ()=>{
   console.log("server is running on port 3000")
 })
