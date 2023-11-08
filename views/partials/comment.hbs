@@ -1,0 +1,163 @@
+<div class="container">
+  <div class="row">
+    <div class="col-md-8">
+      <h3>Comments</h3>
+      <hr>
+      <div class="comments">
+
+      </div>
+      {{!-- <div class="media">
+        <img src="https://placehold.it/64x64" alt="user avatar" class="mr-3 mt-1 rounded-circle">
+        <div class="media-body">
+          <h5 class="mt-0">User 1</h5>
+          <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed euismod, diam vel tincidunt eleifend, velit nulla bibendum quam, vitae bibendum ipsum turpis vel odio. Sed euismod, diam vel tincidunt eleifend, velit nulla bibendum quam, vitae bibendum ipsum turpis vel odio.</p>
+          <div class="media mt-3">
+            <img src="https://placehold.it/64x64" alt="user avatar" class="mr-3 mt-1 rounded-circle">
+            <div class="media-body">
+              <h5 class="mt-0">User 2</h5>
+              <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed euismod, diam vel tincidunt eleifend, velit nulla bibendum quam, vitae bibendum ipsum turpis vel odio. Sed euismod, diam vel tincidunt eleifend, velit nulla bibendum quam, vitae bibendum ipsum turpis vel odio.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <hr> --}}
+      <!-- Add Comment Form -->
+      <form id="my-comment-form" >
+        <h4>    <img src="https://placehold.it/64x64" alt="user avatar" class="mr-3 mt-1 rounded-circle">
+         Leave a Comment:</h4>
+    
+        <div class="form-group">
+          <label for="comment">Comment:</label>
+          <textarea name="comment" id="comment" rows="5" class="form-control" > </textarea>
+        </div>
+        <p id="error-message" class="danger"></p>
+        <button type="submit" id="submitBtn" class="btn btn-primary m-1">Submit</button>
+      </form>
+
+    </div>
+
+  </div>
+
+</div>
+
+<script>
+
+const BASE_URL = `${location.origin}/comment`
+const commentForm = document.getElementById("my-comment-form")
+const errorMessage = document.getElementById("error-message")
+const URL = location.href;
+const postId = URL.split("/")[4];
+const commentsDiv = document.querySelector(".comments")
+
+
+const fetchComments = async ()=>{
+  let html = ""
+try{
+  const res = await fetch(`${BASE_URL}?postId=${postId}`)
+  const comments = await res.json()
+  if(res){
+comments.forEach((comment)=>{
+
+
+  html += `
+  
+  <div class="card m-1">
+  <div class="card-header">
+  Posted on ${new Date(comment.createdAt).toLocaleString("en-US",{
+    "weekday":"long",
+    "year":"numeric",
+    "day":"numeric"
+  })}
+  </div>
+  <div class="card-body">
+    
+    <p class="card-text"> ${comment.text}</p>
+
+    <button class = "btn btn-success"> Reply </button>
+   <button class = "btn btn-primary delete-comment" id = ${comment._id}> Delete </button>
+  </div>
+</div>
+  
+  
+  `
+
+})
+
+commentsDiv.innerHTML = html;
+  }
+
+}catch(er){
+  console.log(er.message)
+}
+
+
+
+
+
+// delete comment
+const deleteCmtBtns = document.querySelectorAll(".delete-comment");
+deleteCmtBtns.forEach((btn)=>{
+  btn.addEventListener("click",()=>{
+    console.log(btn.id)
+  })
+})
+
+
+
+}
+
+
+
+
+
+
+
+
+
+window.addEventListener("load", fetchComments)
+
+
+
+
+
+
+
+
+
+
+
+const formHandeler = async (e)=>{
+  e.preventDefault();
+  const data = new FormData(commentForm);
+
+
+if(data.get("comment").trim().length > 0){
+  try{
+const res = await fetch(`${BASE_URL}`,{
+  headers: {
+'Accept': 'application/json',
+'Content-Type': 'application/json'
+},
+  method:"POST",
+  body:JSON.stringify({comment:data.get("comment"), postId})
+})
+const {message} = await res.json()
+console.log(message)
+
+  errorMessage.innerHTML =""
+
+  }catch(er){
+    console.log(er.message)
+    errorMessage.innerHTML = `${er.message}`
+  }
+}else{
+  errorMessage.innerHTML = `<b> Comment field can not be empty </b>`
+}
+commentForm.reset()
+
+fetchComments()
+}
+
+
+ commentForm.addEventListener("submit", formHandeler)
+</script>

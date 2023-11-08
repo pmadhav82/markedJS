@@ -1,6 +1,5 @@
 var express = require('express');
 var router = express.Router();
-
   
 
 const createDOMPurify = require('dompurify');
@@ -10,14 +9,15 @@ const { marked } = require('marked');
 const window = new JSDOM('').window;
  const DOMPurify = createDOMPurify(window);
 
-
+const Posts = require("../module/post")
+const asyncHandeler = require("express-async-handler");
 
 let posts = [];
 
 
 
 //POST a Blog
-router.post("/", (req,res)=>{
+router.post("/", asyncHandeler( async (req,res)=>{
   const {title, contain} = req.body;
 
   if(title=== "" || contain ===""){
@@ -30,23 +30,21 @@ router.post("/", (req,res)=>{
   else{
     
      const html      = DOMPurify.sanitize(marked.parse(contain))
-  
+  const newPost = {
+    
+      title,
+      contain,
+      html
+  }
+ await Posts.create(newPost)
 
-   const newPost = {
-     title,
-     contain,
-     html,
-     id : new Date().getTime().toString()
-   }
-
-   posts.push(newPost);
 
 res.redirect("newPost")
  }
 }
 )
 
-
+)
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
@@ -58,43 +56,39 @@ router.get('/', function(req, res, next) {
 
 
 // GET Blogs
-router.get("/newPost", (req,res)=>{
-  if(posts.length>0){
-    res.render("post",{
-      posts
-    })
+router.get("/newPost", asyncHandeler( async (req,res)=>{
 
-  } else{
-    res.redirect("/")
-  }
+const posts = await Posts.find().lean()
+res.render("post",{
+  posts
 })
 
+})
+)
 
 
 
 
 // GET a single blog
-router.get("/post/:id",(req,res)=>{
-
-  const {id}= req.params;
-  const post = posts.filter(p=>{
-    return p.id === id;
-  })
-  
-  res.render("singlePost",{
-    post
-  })
- })
-
-// DELETE post
-router.get("/deletePost/:id",(req,res)=>{
-  const {id}= req.params;
-  
-  let itemTobeRemoved = posts.findIndex(post=> post.id === id);
-  posts.splice(itemTobeRemoved,1);
-  res.redirect("/newPost")
+router.get("/post/:id", asyncHandeler( async (req,res)=>{
+const post = await Posts.findById(req.params.id).exec()
+res.render("singlePost",{
+  post
 })
 
+
+})
+
+)
+
+// DELETE post
+router.get("/deletePost/:id", asyncHandeler( async (req,res)=>{
+  await Posts.deleteOne({_id:req.params.id})
+  res.redirect("/newPost")
+
+
+})
+)
 // Edit post
 
 router.get("/editPost/:id",(req,res)=>{
@@ -108,7 +102,7 @@ router.get("/editPost/:id",(req,res)=>{
     id
   })
 })
-
+  
 
 router.post("/editPost/:id",(req,res)=>{
   const {id} = req.params;

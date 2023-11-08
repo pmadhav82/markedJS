@@ -1,12 +1,12 @@
 
 <div class="container  ">
 <a href="/newPost" class="btn btn-success"> All Articles</a>
-{{#each post}}
+
 <div class="card-body  border p-2 m-3">
 
 
     
-     <a href="/editPost/{{this.id}}" class="btn btn-primary m-2">Edit</a>
+     <a href="/editPost/{{post._id}}" class="btn btn-primary m-2">Edit</a>
 <button id="deletebtn" class="btn btn-secondary">Delete</button>
 
 
@@ -16,25 +16,25 @@
         <h4>Do you want to delete it?</h4>
     </div>
         <button id="canclebtn" class="btn btn-primary">Cancle</button>
-        <a href="/deletePost/{{this.id}}" class="btn btn-secondary m-2">Delete</a>
+        <a href="/deletePost/{{post._id}}" class="btn btn-secondary m-2">Delete</a>
 </div>
 
 </div>
 <h2 class="card-title p-2 text-center">
     
-{{this.title}}
+{{post.title}}
 
 </h2>
     
 <div class="card-text m-3">
 
-    {{{this.html}}}
+    {{{post.html}}}
+</div>
+ 
 </div>
 
 </div>
-{{/each}}
-</div>
-    
+        {{> comment}}
 
 
 
