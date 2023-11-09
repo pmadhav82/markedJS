@@ -6,22 +6,7 @@
       <div class="comments">
 
       </div>
-      {{!-- <div class="media">
-        <img src="https://placehold.it/64x64" alt="user avatar" class="mr-3 mt-1 rounded-circle">
-        <div class="media-body">
-          <h5 class="mt-0">User 1</h5>
-          <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed euismod, diam vel tincidunt eleifend, velit nulla bibendum quam, vitae bibendum ipsum turpis vel odio. Sed euismod, diam vel tincidunt eleifend, velit nulla bibendum quam, vitae bibendum ipsum turpis vel odio.</p>
-          <div class="media mt-3">
-            <img src="https://placehold.it/64x64" alt="user avatar" class="mr-3 mt-1 rounded-circle">
-            <div class="media-body">
-              <h5 class="mt-0">User 2</h5>
-              <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed euismod, diam vel tincidunt eleifend, velit nulla bibendum quam, vitae bibendum ipsum turpis vel odio. Sed euismod, diam vel tincidunt eleifend, velit nulla bibendum quam, vitae bibendum ipsum turpis vel odio.</p>
-            </div>
-          </div>
-        </div>
-      </div>
-      <hr> --}}
-      <!-- Add Comment Form -->
+    
       <form id="my-comment-form" >
         <h4>    <img src="https://placehold.it/64x64" alt="user avatar" class="mr-3 mt-1 rounded-circle">
          Leave a Comment:</h4>
@@ -52,11 +37,7 @@ const commentsDiv = document.querySelector(".comments")
 
 const fetchComments = async ()=>{
   let html = ""
-try{
-  const res = await fetch(`${BASE_URL}?postId=${postId}`)
-  const comments = await res.json()
-  if(res){
-comments.forEach((comment)=>{
+  const renderComment = (comment)=>{
 
 
   html += `
@@ -73,13 +54,35 @@ comments.forEach((comment)=>{
     
     <p class="card-text"> ${comment.text}</p>
 
-    <button class = "btn btn-success"> Reply </button>
-   <button class = "btn btn-primary delete-comment" id = ${comment._id}> Delete </button>
+<div class="input-group">
+<form class = "w-50" id = ${comment._id}>
+  
+  <input type="text" class="form-control " placeholder=" Add reply" name = "reply" aria-describedby="basic-addon2">
+   </form>
+
+   <div class="btn-group">
+    <button class = "btn btn-success reply-btn" value = ${comment._id} > Reply </button>
+   <button class = "btn btn-primary delete-comment" value = ${comment._id}> Delete </button>
+
+   
+
   </div>
 </div>
-  
-  
+  </div>
+</div>
+<div class = "p-2">
+  ${comment.replies.length ?  renderComment(comment.replies):""}
+  </div>
   `
+  }
+try{
+  const res = await fetch(`${BASE_URL}?postId=${postId}`)
+  const comments = await res.json()
+  if(res){
+    console.log(comments)
+comments.forEach((comment)=>{
+
+renderComment(comment)
 
 })
 
@@ -94,11 +97,66 @@ commentsDiv.innerHTML = html;
 
 
 
+
+
+// add reply
+const replyBtns = document.querySelectorAll(".reply-btn");
+
+const replyHandeler = (parentId, text)=>{
+console.log({parentId,text})
+
+}
+
+
+replyBtns.forEach((btn)=>{
+   btn.addEventListener("click",()=>{
+    let replyForm = document.getElementById(btn.value);
+    let formData = new FormData(replyForm)
+    let reply = formData.get("reply").trim()
+    if(reply.length>0){
+
+    replyHandeler(btn.value,reply)
+
+    }
+replyForm.reset()
+   })
+})
+
+
 // delete comment
+
+const deleteComment = async (id, url)=>{
+try{
+const res = await fetch(url,{
+  headers:{
+"ACCEPT":"Application/json",
+"Content-Type":"Application/json"
+  },
+  method:"DELETE",
+  body:JSON.stringify({commentId:id})
+})
+const {message} = await res.json()
+console.log(message)
+
+if(res.ok){
+
+  fetchComments()
+}
+
+}
+ catch(er){
+  console.log(er)
+}
+}
+
+
+
+
 const deleteCmtBtns = document.querySelectorAll(".delete-comment");
 deleteCmtBtns.forEach((btn)=>{
   btn.addEventListener("click",()=>{
-    console.log(btn.id)
+
+    deleteComment(btn.value, BASE_URL)
   })
 })
 
@@ -124,14 +182,14 @@ window.addEventListener("load", fetchComments)
 
 
 
-
+// add comment
 
 const formHandeler = async (e)=>{
   e.preventDefault();
   const data = new FormData(commentForm);
+let comment = data.get("comment").trim();
 
-
-if(data.get("comment").trim().length > 0){
+if(comment.length > 0){
   try{
 const res = await fetch(`${BASE_URL}`,{
   headers: {
@@ -139,7 +197,7 @@ const res = await fetch(`${BASE_URL}`,{
 'Content-Type': 'application/json'
 },
   method:"POST",
-  body:JSON.stringify({comment:data.get("comment"), postId})
+  body:JSON.stringify({comment, postId})
 })
 const {message} = await res.json()
 console.log(message)

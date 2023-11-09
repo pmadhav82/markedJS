@@ -38,6 +38,25 @@ try{
 }catch(er){
     console.log(er.message)
 }
+}).delete("/", async(req,res)=>{
+    const {commentId} = req.body
+    const comment =  await Comment.findOne({_id:commentId}).lean();
+
+    if(comment){
+console.log(comment)
+        try{
+    const deleted = await Comment.deleteOne({_id:commentId})
+    if(deleted){
+        res.status(200).json({message:"Comment deleted"})
+    }else{
+        res.status(400).json({message:"Comment can not be deleted"})
+    }
+        }catch(er){
+            console.log(er)
+        }
+    }else{
+        res.status(400).json({message:"Comment can not be deleted"})
+    }
 })
 
 
