@@ -26,9 +26,11 @@ else{
 }
  
 }).get("/" , async(req,res)=>{
+
 const {postId} = req.query;
+
 try{
-   const comments =  await Comment.find({post:postId}).sort({_id:-1}).lean()
+   const comments =  await Comment.find({post:postId,parentComment:null }).sort({_id: 1}).populate("replies").exec()
    if(comments){
 
        res.status(200).json(comments)
@@ -40,24 +42,47 @@ try{
 }
 }).delete("/", async(req,res)=>{
     const {commentId} = req.body
+    try{
     const comment =  await Comment.findOne({_id:commentId}).lean();
 
     if(comment){
-console.log(comment)
-        try{
+             await Comment.deleteMany({_id:{$in:comment.replies}})
     const deleted = await Comment.deleteOne({_id:commentId})
     if(deleted){
         res.status(200).json({message:"Comment deleted"})
     }else{
         res.status(400).json({message:"Comment can not be deleted"})
     }
-        }catch(er){
-            console.log(er)
-        }
+    
     }else{
         res.status(400).json({message:"Comment can not be deleted"})
     }
+    }catch(er){
+        console.log(er.message)
+    }
 })
 
+
+
+commentRouter.post("/reply", async (req,res)=>{
+const {reply, parentId, postId} = req.body;
+if(reply.trim().length> 0){
+     
+    try{
+        const replyText = new Comment({text:reply, post:postId,  parentComment:parentId})
+        await replyText.save()
+        await Comment.findByIdAndUpdate(parentId,{$push:{replies:replyText._id}})
+    
+        res.status(201).json(replyText);
+    }catch(er){
+        console.log(er)
+    }
+
+
+}else{
+    res.status(500).json({message:"Failed to post a reply"})
+}
+
+})
 
 module.exports = commentRouter;

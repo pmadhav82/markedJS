@@ -35,12 +35,20 @@ const postId = URL.split("/")[4];
 const commentsDiv = document.querySelector(".comments")
 
 
+
+
+
+
+
 const fetchComments = async ()=>{
-  let html = ""
-  const renderComment = (comment)=>{
+  let html = document.createElement("div")
+html.className = "d-flex flex-column-reverse"
+
+ const renderComment = (comment)=>{
+let div = document.createElement("div")
 
 
-  html += `
+  div.innerHTML  +=  `
   
   <div class="card m-1">
   <div class="card-header">
@@ -49,6 +57,9 @@ const fetchComments = async ()=>{
     "year":"numeric",
     "day":"numeric"
   })}
+
+   <button class = "btn btn-primary delete-comment" value = ${comment._id}> Delete </button>
+
   </div>
   <div class="card-body">
     
@@ -62,7 +73,6 @@ const fetchComments = async ()=>{
 
    <div class="btn-group">
     <button class = "btn btn-success reply-btn" value = ${comment._id} > Reply </button>
-   <button class = "btn btn-primary delete-comment" value = ${comment._id}> Delete </button>
 
    
 
@@ -70,23 +80,41 @@ const fetchComments = async ()=>{
 </div>
   </div>
 </div>
-<div class = "p-2">
-  ${comment.replies.length ?  renderComment(comment.replies):""}
-  </div>
+
+
   `
+ if(comment.replies && comment.replies.length > 0){
+    comment.replies.forEach((reply)=>{
+     div.style.marginLeft = "-20px"
+    
+      renderComment(reply)
+     
+      
+    })
+  } 
+  
+  
+  html.appendChild(div)
   }
+
+
+
+ 
+
 try{
   const res = await fetch(`${BASE_URL}?postId=${postId}`)
   const comments = await res.json()
+  console.log(comments)
   if(res){
-    console.log(comments)
+    
 comments.forEach((comment)=>{
 
-renderComment(comment)
+   renderComment(comment)
 
 })
 
-commentsDiv.innerHTML = html;
+
+commentsDiv.appendChild(html)
   }
 
 }catch(er){
@@ -102,8 +130,26 @@ commentsDiv.innerHTML = html;
 // add reply
 const replyBtns = document.querySelectorAll(".reply-btn");
 
-const replyHandeler = (parentId, text)=>{
-console.log({parentId,text})
+const replyHandeler = async (parentId, text)=>{
+try{
+  const res = await fetch(`${BASE_URL}/reply`,{
+    headers:{
+      "ACCEPT":"Application/json",
+"Content-Type":"Application/json"
+
+    },
+    method:"POST",
+    body: JSON.stringify({reply:text,postId,parentId})
+  })
+
+const data = await res.json()
+console.log(data)
+if(res.ok){
+  location.reload()
+}
+}catch(er){
+  console.log(er.message)
+}
 
 }
 
@@ -135,12 +181,11 @@ const res = await fetch(url,{
   method:"DELETE",
   body:JSON.stringify({commentId:id})
 })
-const {message} = await res.json()
-console.log(message)
+console.log(await res.json())
 
 if(res.ok){
 
-  fetchComments()
+  location.reload()
 }
 
 }
@@ -213,7 +258,7 @@ console.log(message)
 }
 commentForm.reset()
 
-fetchComments()
+location.reload()
 }
 
 

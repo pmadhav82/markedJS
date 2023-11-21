@@ -23,6 +23,10 @@ default: Date.now()
         ref:"Comment"
     }]
 })
+ commentSchema.pre("find", function(next){
+    this.populate({path:"replies"})
+    next()
+ })
 
 const Comment = new model("Comment", commentSchema)
 
