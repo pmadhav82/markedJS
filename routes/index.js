@@ -12,8 +12,6 @@ const window = new JSDOM('').window;
 const Posts = require("../module/post")
 const asyncHandeler = require("express-async-handler");
 
-let posts = [];
-
 
 
 //POST a Blog

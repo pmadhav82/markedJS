@@ -8,13 +8,18 @@ commentRouter.post("/", async (req, res)=>{
 const {comment, postId} = req.body;
 if(comment.trim().length> 0){
     try{
-        await new Comment({
+      let newComment =  await new Comment({
             text:comment,
             post:postId,
         
         }).save()
-            res.status(201).json({success:true,
-            message:"Comment is added successfully"})
+
+        if(newComment){
+     
+            res.status(200).json(newComment)
+        }else{
+         res.status(200).json({message:"No comments!"})
+        }
 
 
     } catch(er){

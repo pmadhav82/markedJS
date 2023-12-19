@@ -38,11 +38,11 @@ const commentsDiv = document.querySelector(".comments")
 
 
 
-
-
-const fetchComments = async ()=>{
   let html = document.createElement("div")
 html.className = "d-flex flex-column-reverse"
+
+// render comment function
+
 
  const renderComment = (comment)=>{
 let div = document.createElement("div")
@@ -58,7 +58,7 @@ let div = document.createElement("div")
     "day":"numeric"
   })}
 
-   <button class = "btn btn-primary delete-comment" value = ${comment._id}> Delete </button>
+   <button class = "btn btn-primary delete-comment btn-sm" value = ${comment._id}> Delete </button>
 
   </div>
   <div class="card-body">
@@ -72,7 +72,7 @@ let div = document.createElement("div")
    </form>
 
    <div class="btn-group">
-    <button class = "btn btn-success reply-btn" value = ${comment._id} > Reply </button>
+    <button class = "btn btn-success btn-sm reply-btn" value = ${comment._id} > Reply </button>
 
    
 
@@ -85,7 +85,7 @@ let div = document.createElement("div")
   `
  if(comment.replies && comment.replies.length > 0){
     comment.replies.forEach((reply)=>{
-     div.style.marginLeft = "-20px"
+   
     
       renderComment(reply)
      
@@ -95,11 +95,14 @@ let div = document.createElement("div")
   
   
   html.appendChild(div)
+
+  commentsDiv.appendChild(html)
   }
 
 
 
- 
+const fetchComments = async ()=>{
+
 
 try{
   const res = await fetch(`${BASE_URL}?postId=${postId}`)
@@ -114,7 +117,7 @@ comments.forEach((comment)=>{
 })
 
 
-commentsDiv.appendChild(html)
+
   }
 
 }catch(er){
@@ -142,10 +145,10 @@ try{
     body: JSON.stringify({reply:text,postId,parentId})
   })
 
-const data = await res.json()
-console.log(data)
+
 if(res.ok){
-  location.reload()
+  const reply = await res.json()
+location.reload()
 }
 }catch(er){
   console.log(er.message)
@@ -184,8 +187,8 @@ const res = await fetch(url,{
 console.log(await res.json())
 
 if(res.ok){
-
-  location.reload()
+location.reload()
+  
 }
 
 }
@@ -244,8 +247,15 @@ const res = await fetch(`${BASE_URL}`,{
   method:"POST",
   body:JSON.stringify({comment, postId})
 })
-const {message} = await res.json()
-console.log(message)
+if(res.ok){
+
+const comment = await res.json()
+
+   renderComment(comment)
+
+
+
+}
 
   errorMessage.innerHTML =""
 
@@ -258,7 +268,7 @@ console.log(message)
 }
 commentForm.reset()
 
-location.reload()
+
 }
 
 
