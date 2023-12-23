@@ -10,6 +10,9 @@ const window = new JSDOM('').window;
  const DOMPurify = createDOMPurify(window);
 
 const Posts = require("../module/post")
+const Comment = require("../module/comment")
+
+
 const asyncHandeler = require("express-async-handler");
 
 
@@ -70,8 +73,11 @@ res.render("post",{
 // GET a single blog
 router.get("/post/:id", asyncHandeler( async (req,res)=>{
 const post = await Posts.findById(req.params.id).exec()
+const comments =  await Comment.find({post:req.params.id,parentComment:null }).sort({_id: 1}).populate("replies").exec()
+console.log(comments)
 res.render("singlePost",{
-  post
+  post,
+  comments
 })
 
 

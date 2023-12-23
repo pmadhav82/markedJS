@@ -3,7 +3,10 @@
     <div class="col-md-8">
       <h3>Comments</h3>
       <hr>
+      {{> _comment}}
       <div class="comments">
+
+
 
       </div>
     
@@ -24,6 +27,8 @@
   </div>
 
 </div>
+
+
 
 <script>
 
@@ -96,7 +101,7 @@ let div = document.createElement("div")
   
   html.appendChild(div)
 
-  commentsDiv.appendChild(html)
+  commentsDiv.appendChild(html) 
   }
 
 
